@@ -6,8 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Get database URL from environment variables
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
+# Create engine - Don't include options like 'schema' in the URL itself
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
