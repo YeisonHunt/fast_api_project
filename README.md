@@ -67,10 +67,11 @@ energy-billing/
    pip install -r requirements.txt
    ```
 
-4. Crear una base de datos PostgreSQL:
+4. Crear una base de datos PostgreSQL (query console):
    ```
    createdb energy_billing
    ```
+   or manual in the UI.
 
 5. Actualizar el archivo `.env` con la URL de conexión a la base de datos:
    ```
