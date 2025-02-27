@@ -12,7 +12,8 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.models.models import Base
-from app.database import SQLALCHEMY_DATABASE_URL
+# Import from the root database.py file instead of app.database
+from app.database import DATABASE_URL
 
 # Load environment variables
 load_dotenv()
@@ -20,8 +21,8 @@ load_dotenv()
 # this is the Alembic Config object
 config = context.config
 
-# Set the SQLAlchemy URL - Make sure it's in the correct PostgreSQL format
-config.set_main_option("sqlalchemy.url", SQLALCHEMY_DATABASE_URL)
+# Set the SQLAlchemy URL - Use DATABASE_URL instead of SQLALCHEMY_DATABASE_URL
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
