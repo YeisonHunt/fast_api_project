@@ -1,174 +1,165 @@
-# Energy Billing System
+# Sistema de Facturación de Energía
 
-A system for calculating and analyzing energy billing using Python and PostgreSQL.
+Un sistema para calcular y analizar la facturación de energía utilizando Python y PostgreSQL.
 
-## Features
+## Características
 
-- Calculate energy invoice concepts (EA, EC, EE1, EE2)
-- Calculate monthly invoices for clients
-- Retrieve client consumption and injection statistics
-- Monitor system load by hour
+- Calcular conceptos de facturación de energía (EA, EC, EE1, EE2)
+- Calcular facturas mensuales para clientes
+- Obtener estadísticas de consumo e inyección de clientes
+- Monitorear la carga del sistema por hora
 
-## Requirements
+## Requisitos
 
 - Python 3.8+
 - PostgreSQL 12+
-- Dependencies listed in `requirements.txt`
+- Dependencias listadas en `requirements.txt`
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 energy-billing/
 │
-├── alembic/                  # Database migrations
-│   ├── versions/             # Migration versions
-│   └── env.py                # Alembic environment configuration
+├── alembic/                  # Migraciones de base de datos
+│   ├── versions/             # Versiones de migración
+│   └── env.py                # Configuración del entorno Alembic
 │
-├── app/                      # Application code
-│   ├── models/               # SQLAlchemy models
+├── app/                      # Código de la aplicación
+│   ├── models/               # Modelos SQLAlchemy
 │   │   ├── __init__.py
-│   │   └── models.py         # Database models
+│   │   └── models.py         # Modelos de la base de datos
 │   │
-│   ├── routes/               # API endpoints
+│   ├── routes/               # Endpoints de la API
 │   │   ├── __init__.py
-│   │   ├── items.py          # Energy billing endpoints
-│   │   └── users.py          # User endpoints
+│   │   ├── items.py          # Endpoints de facturación de energía
+│   │   └── users.py          # Endpoints de usuarios
 │   │
-│   ├── schemas/              # Pydantic models
+│   ├── schemas/              # Modelos Pydantic
 │   │   ├── __init__.py
-│   │   └── database.py       # Request/response schemas
+│   │   └── database.py       # Esquemas de solicitud/respuesta
 │   │
-│   └── utils/                # Utility functions
-│       └── calculations.py   # Calculation logic
+│   └── utils/                # Funciones utilitarias
+│       └── calculations.py   # Lógica de cálculos
 │
-├── .env                      # Environment variables
-├── alembic.ini               # Alembic configuration
-├── database.py               # Database connection setup
-├── main.py                   # FastAPI application
-└── requirements.txt          # Project dependencies
+├── .env                      # Variables de entorno
+├── alembic.ini               # Configuración de Alembic
+├── database.py               # Configuración de conexión a la base de datos
+├── main.py                   # Aplicación FastAPI
+└── requirements.txt          # Dependencias del proyecto
 ```
 
-## Installation
+## Instalación
 
-1. Clone the repository:
+1. Clonar el repositorio:
    ```
    git clone https://github.com/yourusername/energy-billing.git
    cd energy-billing
    ```
 
-2. Create a virtual environment:
+2. Crear un entorno virtual:
    ```
    python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   source .venv/bin/activate  # En Windows: .venv\Scripts\activate
    ```
 
-3. Install dependencies:
+3. Instalar dependencias:
    ```
    pip install -r requirements.txt
    ```
 
-4. Create a PostgreSQL database:
+4. Crear una base de datos PostgreSQL:
    ```
    createdb energy_billing
    ```
 
-5. Update the `.env` file with your database connection URL:
+5. Actualizar el archivo `.env` con la URL de conexión a la base de datos:
    ```
-   DATABASE_URL=postgresql://username:password@localhost/energy_billing
+   DATABASE_URL=postgresql://usuario:contraseña@localhost/energy_billing
    ```
 
-6. Run the migrations:
+6. Ejecutar las migraciones:
    ```
    alembic upgrade head
    ```
 
-## Running the Application
+## Ejecutar la Aplicación
 
-Start the FastAPI server:
+Iniciar el servidor FastAPI:
 ```
 uvicorn main:app --reload
 ```
 
-The API will be available at http://localhost:8000.
+La API estará disponible en http://localhost:8000.
 
-API Documentation will be available at http://localhost:8000/docs.
+La documentación de la API estará disponible en http://localhost:8000/docs.
 
-### Tests with CURL commands
-# 1. Test the homepage
+### Pruebas con comandos CURL
+
+```sh
+# 1. Probar la página de inicio
 curl -X GET "http://localhost:8000/"
 
-# 2. Calculate a complete invoice for a client (January 2023)
+# 2. Calcular una factura completa para un cliente (Enero 2023)
 curl -X POST "http://localhost:8000/api/v1/calculate-invoice" \
   -H "Content-Type: application/json" \
   -d '{"client_id": 1, "month": 1, "year": 2023}'
 
-# 3. Calculate a complete invoice for a client (February 2023)
+# 3. Calcular una factura completa para un cliente (Febrero 2023)
 curl -X POST "http://localhost:8000/api/v1/calculate-invoice" \
   -H "Content-Type: application/json" \
   -d '{"client_id": 1, "month": 2, "year": 2023}'
 
-# 4. Get client statistics
+# 4. Obtener estadísticas de un cliente
 curl -X GET "http://localhost:8000/api/v1/client-statistics/1"
 
-# 5. Get system load for January 1, 2023
+# 5. Obtener la carga del sistema para el 1 de enero de 2023
 curl -X GET "http://localhost:8000/api/v1/system-load?date_str=2023-01-01"
 
-# 6. Calculate EA (Active Energy) for January 2023
+# 6. Calcular EA (Energía Activa) para enero de 2023
 curl -X GET "http://localhost:8000/api/v1/calculate-ea/1?year=2023&month=1"
 
-# 7. Calculate EC (Energy Excess Commercialization) for January 2023
+# 7. Calcular EC (Excedente de Comercialización de Energía) para enero de 2023
 curl -X GET "http://localhost:8000/api/v1/calculate-ec/1?year=2023&month=1"
 
-# 8. Calculate EE1 (Energy Excess type 1) for January 2023
+# 8. Calcular EE1 (Excedente de Energía tipo 1) para enero de 2023
 curl -X GET "http://localhost:8000/api/v1/calculate-ee1/1?year=2023&month=1"
 
-# 9. Calculate EE2 (Energy Excess type 2) for January 2023
+# 9. Calcular EE2 (Excedente de Energía tipo 2) para enero de 2023
 curl -X GET "http://localhost:8000/api/v1/calculate-ee2/1?year=2023&month=1"
 
-# 10. Get client basic information
+# 10. Obtener información básica de un cliente
 curl -X GET "http://localhost:8000/api/v1/users/1"
 
-# 11. Test a different client - client 2
+# 11. Probar con otro cliente - cliente 2
 curl -X POST "http://localhost:8000/api/v1/calculate-invoice" \
   -H "Content-Type: application/json" \
   -d '{"client_id": 2, "month": 1, "year": 2023}'
+```
 
-# 12. Test a different client - client 3
-curl -X POST "http://localhost:8000/api/v1/calculate-invoice" \
-  -H "Content-Type: application/json" \
-  -d '{"client_id": 3, "month": 1, "year": 2023}'
+## Endpoints de la API
 
-# 13. Testing edge case: March data where injection = consumption
-curl -X POST "http://localhost:8000/api/v1/calculate-invoice" \
-  -H "Content-Type: application/json" \
-  -d '{"client_id": 1, "month": 3, "year": 2023}'
+- `POST /api/v1/calculate-invoice`: Calcula la factura de un cliente para un mes específico.
+- `GET /api/v1/client-statistics/{client_id}`: Obtiene estadísticas de consumo e inyección de un cliente.
+- `GET /api/v1/system-load`: Obtiene la carga del sistema por hora según los datos de consumo.
+- `GET /api/v1/calculate-ea/{client_id}`: Calcula EA (Energía Activa) para un cliente y mes.
+- `GET /api/v1/calculate-ec/{client_id}`: Calcula EC (Excedente de Comercialización de Energía) para un cliente y mes.
+- `GET /api/v1/calculate-ee1/{client_id}`: Calcula EE1 (Excedente de Energía tipo 1) para un cliente y mes.
+- `GET /api/v1/calculate-ee2/{client_id}`: Calcula EE2 (Excedente de Energía tipo 2) para un cliente y mes.
+- `GET /api/v1/users/{client_id}`: Obtiene información básica de un cliente.
 
+## Esquema de Base de Datos
 
+El esquema de la base de datos incluye las siguientes tablas:
+- `services`: Información sobre los servicios de los clientes.
+- `records`: Registros de consumo e inyección de energía.
+- `consumption`: Datos de consumo de energía.
+- `injection`: Datos de inyección de energía.
+- `tariffs`: Tarifas de energía.
+- `xm_data_hourly_per_agent`: Precios de la energía por hora.
 
-## API Endpoints
+## Lógica de Cálculo
 
-- `POST /api/v1/calculate-invoice`: Calculate the invoice for a client and a specific month
-- `GET /api/v1/client-statistics/{client_id}`: Get consumption and injection statistics for a client
-- `GET /api/v1/system-load`: Get system load by hour based on consumption data
-- `GET /api/v1/calculate-ea/{client_id}`: Calculate EA (Active Energy) for a client and month
-- `GET /api/v1/calculate-ec/{client_id}`: Calculate EC (Energy Excess Commercialization) for a client and month
-- `GET /api/v1/calculate-ee1/{client_id}`: Calculate EE1 (Energy Excess type 1) for a client and month
-- `GET /api/v1/calculate-ee2/{client_id}`: Calculate EE2 (Energy Excess type 2) for a client and month
-- `GET /api/v1/users/{client_id}`: Get basic information about a client
-
-## Database Schema
-
-The database schema includes the following tables:
-- `services`: Information about client services
-- `records`: Records of energy consumption and injection
-- `consumption`: Energy consumption data
-- `injection`: Energy injection data
-- `tariffs`: Energy tariffs
-- `xm_data_hourly_per_agent`: Hourly energy prices
-
-## Calculation Logic
-
-- **EA (Active Energy)**: Sum of consumption * CU rate
-- **EC (Energy Excess Commercialization)**: Sum of injection * C rate
-- **EE1 (Energy Excess type 1)**: Min(sum(injection), sum(consumption)) * (-CU rate)
-- **EE2 (Energy Excess type 2)**: Calculated hourly when injection exceeds consumption
+- **EA (Energía Activa)**: Suma del consumo * tarifa CU.
+- **EC (Excedente de Comercialización de Energía)**: Suma de la inyección * tarifa C.
+- **EE1 (Excedente de Energía tipo 1)**: Min(suma(inyección), suma(consumo)) * (-tarifa CU).
+- **EE2 (Excedente de Energía tipo 2)**: Se calcula por hora cuando la inyección supera el consumo.
