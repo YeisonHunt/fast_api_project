@@ -81,6 +81,11 @@ energy-billing/
    ```
    alembic upgrade head
    ```
+   
+7. Cargar la data inicial desde los CSV:
+   ```
+   python load_initial_data.py
+   ```
 
 ## Ejecutar la Aplicación
 
