@@ -1,26 +1,73 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 from app.database import Base
 
 
-class User(Base):
-    __tablename__ = "users"
+class Injection(Base):
+    __tablename__ = "injection"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
+    id_record = Column(Integer, ForeignKey("records.id_record"), primary_key=True)
+    value = Column(Float)
 
-    # Relationship
-    items = relationship("Item", back_populates="owner")
+    record = relationship("Record", back_populates="injection")
 
 
-class Item(Base):
-    __tablename__ = "items"
+class Record(Base):
+    __tablename__ = "records"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    id_record = Column(Integer, primary_key=True, index=True)
+    id_service = Column(Integer, ForeignKey("services.id_service"))
+    record_timestamp = Column(DateTime, default=datetime.utcnow)
 
-    # Relationship
-    owner = relationship("User", back_populates="items")
+    service = relationship("Service", back_populates="records")
+    injection = relationship("Injection", back_populates="record", uselist=False)
+    consumption = relationship("Consumption", back_populates="record", uselist=False)
+
+
+class Service(Base):
+    __tablename__ = "services"
+
+    id_service = Column(Integer, primary_key=True, index=True)
+    id_market = Column(Integer)
+    cir = Column(Integer)
+    voltage_level = Column(Integer)
+
+    records = relationship("Record", back_populates="service")
+
+
+class Tariff(Base):
+    __tablename__ = "tariffs"
+
+    id_market = Column(Integer, primary_key=True)
+    cdi = Column(Integer, primary_key=True)
+    voltage_level = Column(Integer, primary_key=True)
+    G = Column(Float)
+    T = Column(Float)
+    D = Column(Float)
+    R = Column(Float)
+    C = Column(Float)
+    P = Column(Float)
+    CU = Column(Float)
+
+    __table_args__ = (
+        PrimaryKeyConstraint('id_market', 'cdi', 'voltage_level'),
+    )
+
+
+class Consumption(Base):
+    __tablename__ = "consumption"
+
+    id_record = Column(Integer, ForeignKey("records.id_record"), primary_key=True)
+    value = Column(Float)
+
+    record = relationship("Record", back_populates="consumption")
+
+
+class XmDataHourlyPerAgent(Base):
+    __tablename__ = "xm_data_hourly_per_agent"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    record_timestamp = Column(DateTime)
+    value = Column(Float)
